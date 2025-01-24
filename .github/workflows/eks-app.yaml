@@ -1,0 +1,89 @@
+name: App With Github Actions with EKS, ArgoCD
+on: 
+  workflow_dispatch
+  # push:
+   # paths-ignore:
+     # - 'manifest/**'
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Make application.properties
+      run: |
+        mkdir -p ./src/main/resources
+        cd ./src/main/resources
+        touch ./application.properties
+        echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./application.properties
+      shell: bash
+
+    - name: Build with Maven
+      run: mvn -B -DskipTests package --file pom.xml
+      
+    - name: Naming jar file
+      run: mv ./target/app-with-argocd-0.0.1-SNAPSHOT.jar ./target/app.jar
+
+    - name: Check jar file
+      run: ls ./target
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: app
+        path: ./target/*.jar
+        
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-northeast-2
+
+    - name: Login to Amazon ECR Private
+      id: login-ecr-private
+      uses: aws-actions/amazon-ecr-login@v2
+      with:
+        registry-type: private
+
+    - name: Build, tag, and push docker image to Amazon ECR Private
+      env:
+        REGISTRY: ${{ steps.login-ecr-private.outputs.registry }}
+        REPOSITORY: eks-app
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin $REGISTRY
+        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+        docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+  cd:
+    runs-on: ubuntu-latest
+    needs: ci
+    
+    steps:
+    - uses: actions/checkout@v4 
+      with:
+        repository: 7910trio/eks-app
+        ref: main
+        token: ${{ secrets.TOKEN }}
+
+    - name: Set up Image for ECR
+      env:
+        ECR_IMAGE: ${{ secrets.PRIVATE_ECR_ID }}/eks-app:${{ github.sha }}
+      run: |
+        sed -i "s%image: .*/eks-app:[A-z0-9]*%image: $ECR_IMAGE%" ./manifest/eks-app.yaml
+
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "7910trio@naver.com"
+        git config --local user.name "7910trio"
+        git add .
+        git commit -m "Update application image version for ArgoCD with ECR"
+        git push
