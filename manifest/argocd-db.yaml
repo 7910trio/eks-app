@@ -1,21 +1,16 @@
-# db-pv.yaml
-apiVersion: v1
-kind: PersistentVolume
+## ebs_dynamic_sc.yaml
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
 metadata:
-  name: db-pv
-  labels:
-    type: local
-spec:
-  accessModes:
-  - ReadWriteOnce
-  capacity:
-    storage: 500Mi
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: db-storage
-  hostPath:
-    path: /mnt/argocd-data
-
----
+  name: ebs-db-sc
+allowVolumeExpansion: true
+provisioner: ebs.csi.aws.com
+volumeBindingMode: WaitForFirstConsumer
+parameters:
+  type: gp3
+  allowAutoIOPSPerGBIncrease: 'true'
+  encrypted: 'true'
+  
 # db-service.yaml
 apiVersion: v1
 kind: Service
@@ -75,4 +70,4 @@ spec:
         resources:
           requests:
             storage: 30Mi
-        storageClassName: db-storage
+        storageClassName: ebs-db-sc
