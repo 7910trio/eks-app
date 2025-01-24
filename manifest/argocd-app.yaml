@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: app-argocd-container
-        image: 7910trio/eks-app:8bead2dbe73e05df5f08c87836361a49454b4472
+        image: 343218222789.dkr.ecr.ap-northeast-2.amazonaws.com/eks-app:95c41b4cdfcd9dce4b7551748f092554f82bdcf3
         ports:
           - protocol: TCP
             containerPort: 8080
