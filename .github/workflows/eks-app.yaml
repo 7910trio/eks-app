@@ -77,7 +77,7 @@ jobs:
       env:
         ECR_IMAGE: ${{ secrets.PRIVATE_ECR_ID }}/eks-app:${{ github.sha }}
       run: |
-        sed -i "s%image: 7910trio/eks-app:[A-z0-9]*%image: $ECR_IMAGE%" ./manifest/argocd-app.yaml
+        sed -i "s%image: ${{ secrets.PRIVATE_ECR_ID }}/eks-app:[A-z0-9]*%image: $ECR_IMAGE%" ./manifest/argocd-app.yaml
 
     - name: Commit and push changes
       run: |
