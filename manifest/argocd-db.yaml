@@ -33,7 +33,7 @@ kind: StatefulSet
 metadata:
   name: db-statefulset
 spec:
-  serviceName: "db-service"
+  serviceName: "mysql-service"
   replicas: 1
   selector:
     matchLabels:
