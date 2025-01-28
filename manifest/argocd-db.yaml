@@ -1,17 +1,4 @@
-## ebs_dynamic_sc.yaml
-kind: StorageClass
-apiVersion: storage.k8s.io/v1
-metadata:
-  name: ebs-db-sc
-allowVolumeExpansion: true
-provisioner: ebs.csi.aws.com
-volumeBindingMode: WaitForFirstConsumer
-parameters:
-  type: gp3
-  allowAutoIOPSPerGBIncrease: 'true'
-  encrypted: 'true'
-  
-# db-service.yaml
+  # db-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
