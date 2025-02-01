@@ -34,3 +34,26 @@ spec:
         ports:
           - protocol: TCP
             containerPort: 8080
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-argocd-ingress
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    external-dns.alpha.kubernetes.io/hostname: application.cloud-route53-leeseoyoung.store
+spec:
+  rules:
+  - host: application.cloud-route53-leeseoyoung.store
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app-argocd-service
+            port:
+              number: 8080 
