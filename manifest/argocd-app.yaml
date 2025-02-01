@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: app-argocd-service
   annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: classic
     external-dns.alpha.kubernetes.io/hostname: application.cloud-route53-leeseoyoung.store
 spec:
   selector:
