@@ -1,4 +1,4 @@
-  # db-service.yaml
+# db-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
