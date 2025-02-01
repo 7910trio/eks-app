@@ -10,7 +10,6 @@ spec:
   type: LoadBalancer
   ports:
   - protocol: TCP
-    nodePort: 31080
     port: 8080
     targetPort: 8080
 
