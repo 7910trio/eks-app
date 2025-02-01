@@ -1,6 +1,6 @@
 name: App With Github Actions with EKS, ArgoCD
 on: 
-   push:   
+   push:       
     paths-ignore: 
       - 'manifest/**' 
 jobs:
