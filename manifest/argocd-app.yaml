@@ -42,7 +42,6 @@ kind: Ingress
 metadata:
   name: app-argocd-ingress
   annotations:
-    kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
     external-dns.alpha.kubernetes.io/hostname: application.cloud-route53-leeseoyoung.store
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}, {"HTTPS":443}]'
