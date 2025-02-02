@@ -42,6 +42,7 @@ kind: Ingress
 metadata:
   name: app-argocd-ingress
   annotations:
+    kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
     external-dns.alpha.kubernetes.io/hostname: application.cloud-route53-leeseoyoung.store
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}, {"HTTPS":443}]'
@@ -50,7 +51,6 @@ metadata:
     alb.ingress.kubernetes.io/success-codes: 200-399
     alb.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
-  ingressClassName: alb  # ALB를 사용하려면 반드시 필요
   rules:
   - host: application.cloud-route53-leeseoyoung.store
     http:
