@@ -1,4 +1,4 @@
-name: App With Github Actions with EKS, ArgoCD
+name: App With Github Actions with EKS, ArgoCD 
 on: 
    push:       
     paths-ignore: 
