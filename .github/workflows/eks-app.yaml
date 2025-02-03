@@ -3,7 +3,7 @@ on:
    push:        
     paths-ignore: 
       - 'manifest/**' 
-jobs:
+jobs: 
   ci:   
     runs-on: ubuntu-latest
 
