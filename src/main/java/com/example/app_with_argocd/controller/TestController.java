@@ -8,6 +8,6 @@ public class TestController {
 
     @GetMapping(value = "/")
     public String testAPI() {
-        return "eks-app-0.0.1";
+        return "eks-app-0.0.2";
     }
 }
