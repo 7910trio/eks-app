@@ -4,7 +4,7 @@ on:
     paths-ignore: 
       - 'manifest/**'  
 jobs: 
-  ci:   
+  ci-cd:   
     runs-on: ubuntu-latest
 
     steps:
@@ -62,14 +62,10 @@ jobs:
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
-  cd:
-    runs-on: ubuntu-latest
-    needs: ci
-    
-    steps:
-    - uses: actions/checkout@v4 
+    - name: Update application image version for ArgoCD
+      uses: actions/checkout@v4
       with:
-        repository: 7910trio/eks-app
+        repository: ${{ secrets.G_USER }}/${{ secrets.G_REPOSITORY }}
         ref: main
         token: ${{ secrets.TOKEN }}
 
@@ -77,12 +73,12 @@ jobs:
       env:
         ECR_IMAGE: ${{ secrets.PRIVATE_ECR_ID }}/eks-app:${{ github.sha }}
       run: |
-        sed -i "s%image: ${{ secrets.PRIVATE_ECR_ID }}/eks-app:[A-z0-9]*%image: $ECR_IMAGE%" ./manifest/argocd-app.yaml
-
+        sed -i "s%image: 7910trio/eks-app:[A-z0-9]*%image: $ECR_IMAGE%" ./manifest/argocd-app.yaml
+  
     - name: Commit and push changes
       run: |
-        git config --local user.email "7910trio@naver.com"
-        git config --local user.name "7910trio"
+        git config --local user.email "${{ secrets.G_USER_EMAIL }}"
+        git config --local user.name "${{ secrets.G_USER }}"
         git add .
-        git commit -m "Update application image version for ArgoCD with ECR"
+        git commit -m "Update application image version for ArgoCD"
         git push
