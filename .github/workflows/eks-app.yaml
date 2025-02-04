@@ -73,7 +73,7 @@ jobs:
       env:
         ECR_IMAGE: ${{ secrets.PRIVATE_ECR_ID }}/eks-app:${{ github.sha }}
       run: |
-        sed -i "s%image: [a-zA-Z0-9./_-]*%image: $ECR_IMAGE%" ./manifest/eks-app.yaml
+        sed -i "s%image: [^ ]*%image: $ECR_IMAGE%" ./manifest/eks-app.yaml
 
     - name: Commit and push changes
       run: |
